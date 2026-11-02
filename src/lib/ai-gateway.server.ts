@@ -1,6 +1,8 @@
 // Server-only module: Lovable AI Gateway helpers + the planning assistant handler.
 // Never import this from client code — it reads process.env.LOVABLE_API_KEY.
 
+import type { UIMessage } from "ai";
+
 const LOVABLE_AIG_RUN_ID_HEADER = "X-Lovable-AIG-Run-ID";
 
 function createLovableAiGatewayRunIdFetch(initialRunId?: string) {
@@ -151,7 +153,7 @@ For every event you help plan:
 Style: warm and encouraging but concise and concrete. Use markdown with short bold headers and tight bullet lists. Always give real numbers with assumptions. When something is unclear (city, headcount, vibe), make a reasonable assumption, state it in one line, and continue. End longer plans with a short offer to adjust or go deeper.`;
 
 export async function handleChatRequest(request: Request): Promise<Response> {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) {
     return Response.json(
       { error: "The AI assistant is not configured. Please try again later." },
@@ -172,7 +174,7 @@ export async function handleChatRequest(request: Request): Promise<Response> {
   }
 
   const { createOpenAI } = await import("@ai-sdk/openai");
-  const { streamText, convertToModelMessages, type UIMessage } = await import("ai");
+  const { streamText, convertToModelMessages } = await import("ai");
 
   const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(request));
   const provider = createOpenAI({
@@ -183,10 +185,11 @@ export async function handleChatRequest(request: Request): Promise<Response> {
   });
 
   const messages = uiMessages as UIMessage[];
+  const modelMessages = await convertToModelMessages(messages);
   const result = streamText({
     model: provider.responses(ASSISTANT_MODEL),
     system: SYSTEM_PROMPT,
-    messages: convertToModelMessages(messages),
+    messages: modelMessages,
     abortSignal: request.signal,
     providerOptions: {
       openai: {
