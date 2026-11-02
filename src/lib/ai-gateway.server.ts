@@ -1,6 +1,8 @@
 // Server-only module: Lovable AI Gateway helpers + the planning assistant handler.
 // Never import this from client code — it reads process.env.LOVABLE_API_KEY.
 
+import type { UIMessage } from "ai";
+
 const LOVABLE_AIG_RUN_ID_HEADER = "X-Lovable-AIG-Run-ID";
 
 function createLovableAiGatewayRunIdFetch(initialRunId?: string) {
