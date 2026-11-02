@@ -153,7 +153,7 @@ For every event you help plan:
 Style: warm and encouraging but concise and concrete. Use markdown with short bold headers and tight bullet lists. Always give real numbers with assumptions. When something is unclear (city, headcount, vibe), make a reasonable assumption, state it in one line, and continue. End longer plans with a short offer to adjust or go deeper.`;
 
 export async function handleChatRequest(request: Request): Promise<Response> {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) {
     return Response.json(
       { error: "The AI assistant is not configured. Please try again later." },
