@@ -185,10 +185,11 @@ export async function handleChatRequest(request: Request): Promise<Response> {
   });
 
   const messages = uiMessages as UIMessage[];
+  const modelMessages = await convertToModelMessages(messages);
   const result = streamText({
     model: provider.responses(ASSISTANT_MODEL),
     system: SYSTEM_PROMPT,
-    messages: convertToModelMessages(messages),
+    messages: modelMessages,
     abortSignal: request.signal,
     providerOptions: {
       openai: {
