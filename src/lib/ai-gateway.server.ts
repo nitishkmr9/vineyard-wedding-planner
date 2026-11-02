@@ -172,7 +172,7 @@ export async function handleChatRequest(request: Request): Promise<Response> {
   }
 
   const { createOpenAI } = await import("@ai-sdk/openai");
-  const { streamText, convertToModelMessages, type UIMessage } = await import("ai");
+  const { streamText, convertToModelMessages } = await import("ai");
 
   const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(request));
   const provider = createOpenAI({
